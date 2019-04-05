@@ -1,0 +1,4 @@
+hexdump==3.3
+PyQt5==5.12.1
+matplotlib==3.0.3
+

@@ -1,7 +1,6 @@
 import sys
 import os
 import random
-from numpy import arange,sin,pi
 from PyQt5 import QtCore,QtWidgets,QtGui
 import matplotlib
 from matplotlib import style
