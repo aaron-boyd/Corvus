@@ -1,6 +1,7 @@
 import sys
 import random
 import hexdump
+from os import path
 from PyQt5 import QtCore, QtWidgets, QtGui
 from CorvusHexDumpWidget import CorvusHexDumpWidget
 from CorvusPlotsWidget import CorvusPlotsWidget
@@ -11,6 +12,9 @@ QMainWindow{
 background-color: darkgrey;
 }
 """
+
+here = path.abspath(path.dirname(__file__))
+
 
 class CorvusMainWidget(QtWidgets.QWidget):
     def __init__(self):
@@ -67,7 +71,7 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         mainMenu = self.menuBar()
         menuBar = mainMenu.addMenu("File")
         menuBar.addAction("Open",self.mainWidget.openFile)
-        self.setWindowIcon(QtGui.QIcon('bird.png'))
+        self.setWindowIcon(QtGui.QIcon(here + '/bird.png'))
         self.setCentralWidget(self.mainWidget)
 
     
