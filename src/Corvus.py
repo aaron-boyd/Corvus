@@ -19,6 +19,7 @@ here = path.abspath(path.dirname(__file__))
 class CorvusMainWidget(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
+        self.bytes = []
 
         self.hexDump = CorvusHexDumpWidget()
         self.plotsWidget = CorvusPlotsWidget()
@@ -30,8 +31,9 @@ class CorvusMainWidget(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
 
         layout.addWidget(self.plotsWidget,0,0,1,1,QtCore.Qt.AlignRight)
-        layout.addWidget(self.hexDump,0,1,1,1,QtCore.Qt.AlignCenter)
-        layout.addWidget(self.heatMap,0,2,1,1,QtCore.Qt.AlignLeft)
+        layout.addWidget(self.heatMap,0,1,1,1,QtCore.Qt.AlignCenter)
+        layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
+
         return layout
 
 
@@ -52,12 +54,29 @@ class CorvusMainWidget(QtWidgets.QWidget):
         self.fileName = self.getFileName()
 
         if self.fileName is not None:
-            self.hexDump.getBytesFromFile(self.fileName)
-            self.hexDump.populateHexDump()
-            self.plotsWidget.plot2D.updatePlot(self.hexDump.bytes)
-            self.plotsWidget.create3DPoints(self.hexDump.bytes)
-            self.heatMap.addBytesToHeatMap(self.hexDump.bytes)
+            self.getBytesFromFile()
+            self.hexDump.populateHexDumpWidget(self.bytes)
+            self.plotsWidget.plot2D.updatePlot(self.bytes)
+            self.plotsWidget.create3DPoints(self.bytes)
+            self.heatMap.addBytesToHeatMap(self.bytes)
             self.heatMap.update()
+
+    
+    def getBytesFromFile(self):
+        try:
+            f = open(self.fileName, "rb")
+            self.hexDump.hexDumpString = ""
+        except:
+            print("ERROR: Could not find %s" % fileName)
+            return
+
+        self.bytes = []
+
+        byte = f.read(1)
+
+        while byte:
+            self.bytes.append(byte)
+            byte = f.read(1)
 
 
 class CorvusMainWindow(QtWidgets.QMainWindow):
@@ -70,7 +89,7 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         self.setStyleSheet(appStyle)
         mainMenu = self.menuBar()
         menuBar = mainMenu.addMenu("File")
-        menuBar.addAction("Open",self.mainWidget.openFile)
+        menuBar.addAction("Open", self.mainWidget.openFile)
         self.setWindowIcon(QtGui.QIcon(here + '/CorvusIcon.png'))
         self.setCentralWidget(self.mainWidget)
 

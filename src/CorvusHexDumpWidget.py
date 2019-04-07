@@ -11,7 +11,7 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         
         self.fileName = ""
         self.hexDumpString = ""
-        self.bytes = []
+
         self.initTextEdit()
         self.initScrollBar()
         self.layout = QtWidgets.QVBoxLayout()
@@ -26,34 +26,13 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         self.scrollBar.valueChanged.connect(self.printScrollValue)
 
     def printScrollValue(self):
-        #print(self.scrollBar.value())
         pass
 
-    def populateHexDump(self):
-        self.getHexDump()
-        self.setText(self.hexDumpString)
-        
-
-    def getBytesFromFile(self,fileName):
-        self.fileName = fileName
-        try:
-            f = open(self.fileName, "rb")
-            self.hexDumpString = ""
-        except:
-            print("ERROR: Could not find %s" % fileName)
-            return
-
-        self.bytes = []
-
-        byte = f.read(1)
-
-        while byte:
-            self.bytes.append(byte)
-            byte = f.read(1)
-
-        self.lines = (len(self.bytes) // 16) + 1
-        print("Line Count: ",self.lines)
+    def populateHexDumpWidget(self,byts):
+        self.lines = (len(byts) // 16) + 1
         self.scrollBar.setMaximum(self.lines)
+        self.getHexDump(byts)
+        self.setText(self.hexDumpString)
 
 
     def initTextEdit(self):
@@ -68,10 +47,10 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         self.edit.setPlainText(self.hexDumpString)
 
 
-    def getHexDump(self):
+    def getHexDump(self,byts):
         with open('/tmp/hexDump.txt', 'w') as f:
             with redirect_stdout(f):
-                hexdump.hexdump(b''.join(self.bytes))
+                hexdump.hexdump(b''.join(byts))
             f.close()
         with open('/tmp/hexDump.txt', 'r') as f:
             for line in f:

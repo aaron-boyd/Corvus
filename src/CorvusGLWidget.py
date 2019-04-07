@@ -79,8 +79,7 @@ class CorvusGLWidget(QOpenGLWidget):
         if side < 0:
             return
 
-        gl.glViewport((width - side) // 2, (height - side) // 2, side,
-                           side)
+        gl.glViewport((width - side) // 2, (height - side) // 2, side, side)
 
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
@@ -95,11 +94,11 @@ class CorvusGLWidget(QOpenGLWidget):
         dy = event.y() - self.lastPos.y()
 
         if event.buttons() & Qt.LeftButton:
-            self.setXRotation(self.xRot + 8 * dy)
+            self.setXRotation(self.xRot + 8 * -dy)
             self.setYRotation(self.yRot + 8 * dx)
         elif event.buttons() & Qt.RightButton:
-            self.setXRotation(self.xRot + 8 * dy)
-            self.setZRotation(self.zRot + 8 * dx)
+            self.setXRotation(self.xRot + 8 * -dy)
+            self.setZRotation(self.zRot + 8 * -dx)
 
         self.lastPos = event.pos()
 
