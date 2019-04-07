@@ -1,5 +1,5 @@
 import sys
-import random
+import time
 import hexdump
 from os import path
 from PyQt5 import QtCore, QtWidgets, QtGui
@@ -54,12 +54,20 @@ class CorvusMainWidget(QtWidgets.QWidget):
         self.fileName = self.getFileName()
 
         if self.fileName is not None:
+            start_time = time.time()
+            print("Getting data from file...")
             self.getBytesFromFile()
+            print("Generating hex dump...")
             self.hexDump.populateHexDumpWidget(self.bytes)
+            print("Generating 2D plot...")
             self.plotsWidget.plot2D.updatePlot(self.bytes)
+            print("Generating 3D plot...")
             self.plotsWidget.create3DPoints(self.bytes)
+            print("Generating heat map...")
             self.heatMap.addBytesToHeatMap(self.bytes)
             self.heatMap.update()
+            print("File size: %0.2fMB" % (len(self.bytes) / 1000000.0))
+            print("Process time: %0.5f seconds" % (time.time() - start_time))
 
     
     def getBytesFromFile(self):
