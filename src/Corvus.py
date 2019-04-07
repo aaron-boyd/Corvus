@@ -20,7 +20,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
 
-        self.hexDump = CorvusHexDumpWidget() 
+        self.hexDump = CorvusHexDumpWidget()
         self.plotsWidget = CorvusPlotsWidget()
         self.heatMap = CorvusHeatMapWidget()
         self.setLayout(self.creatGridLayout())
@@ -39,7 +39,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
         dlg = QtWidgets.QFileDialog()
         dlg.setFileMode(QtWidgets.QFileDialog.AnyFile)
         fileNames = QtCore.QStringListModel()
-        
+
         if dlg.exec_():
             fileNames = dlg.selectedFiles()
             return fileNames[0]
@@ -55,7 +55,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             self.hexDump.getBytesFromFile(self.fileName)
             self.hexDump.populateHexDump()
             self.plotsWidget.plot2D.updatePlot(self.hexDump.bytes)
-            self.plotsWidget.plot3D.updatePlot(self.hexDump.bytes)
+            self.plotsWidget.create3DPoints(self.hexDump.bytes)
             self.heatMap.addBytesToHeatMap(self.hexDump.bytes)
             self.heatMap.update()
 
@@ -71,10 +71,9 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         mainMenu = self.menuBar()
         menuBar = mainMenu.addMenu("File")
         menuBar.addAction("Open",self.mainWidget.openFile)
-        self.setWindowIcon(QtGui.QIcon(here + '/bird.png'))
+        self.setWindowIcon(QtGui.QIcon(here + '/CorvusIcon.png'))
         self.setCentralWidget(self.mainWidget)
 
-    
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(["Corvus"])
