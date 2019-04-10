@@ -60,7 +60,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             print("Generating hex dump...")
             self.hexDump.populateHexDumpWidget(self.bytes)
             print("Generating 2D plot...")
-            self.plotsWidget.plot2D.updatePlot(self.bytes)
+            self.plotsWidget.create2DPoints(self.bytes)
             print("Generating 3D plot...")
             self.plotsWidget.create3DPoints(self.bytes)
             print("Generating heat map...")

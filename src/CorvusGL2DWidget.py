@@ -7,35 +7,88 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, 
 import random
 import OpenGL.GL as gl
 
-class CorvusGL2DWidget(QOpenGLWidget):  
-    def initializeGL(self):  
-        # here openGL is initialized and we can do our real program initialization
-        gl.glClearColor(0.1, 0.2, 0.3, 1.0) 
+class CorvusGL2DWidget(QOpenGLWidget):
 
-    
-    def resizeGL(self, width, height):  
-        # openGL remembers how many pixels it should draw,  
-        # so every resize we have to tell it what the new window size is it is supposed  
-        # to be drawing for
-        gl.glViewport(0, 0, width, height)
-        
+    def __init__(self, parent=None):
+        super(CorvusGL2DWidget, self).__init__(parent)
 
+        self.object = 0
+        self.xRot = 0
+        self.yRot = 0
+
+        self.points = [(0.50,0.50)]
+
+        self.lastPos = QPoint()
+
+        self.trolltechGreen = QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
+
+        self.black = QColor.fromRgb(0.0,0.0,0.0)
+
+    def minimumSizeHint(self):
+        return QSize(50, 50)
+
+    def sizeHint(self):
+        return QSize(500,500)
+
+
+    def initializeGL(self):
+        self.setClearColor(self.black.darker())
+        self.object = self.makeObject()
+        gl.glShadeModel(gl.GL_FLAT)
+        gl.glEnable(gl.GL_DEPTH_TEST)
+        gl.glEnable(gl.GL_CULL_FACE)
     
-    def paintGL(self):  
-        # here we can start drawing, on show and on resize the window will redraw  
-        # automatically
-        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)  
-        # the openGL window has coordinates from (-1,-1) to (1,1), so this fills in   
-        # the top right corner with a rectangle. The default color is white.  
+    def updateObject(self):
+        self.setClearColor(self.black.darker())
+        self.object = self.makeObject()
+        self.repaint()
+    
+    def paintGL(self):
+        gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
+        gl.glLoadIdentity()
+        gl.glTranslated(0.0, 0.0, -10.0)
+        gl.glCallList(self.object)
+
+    def resizeGL(self, width, height):
+        side = min(width, height)
+        if side < 0:
+            return
+
+        gl.glViewport((width - side) // 2, (height - side) // 2, side, side)
+
+        gl.glMatrixMode(gl.GL_PROJECTION)
+        gl.glLoadIdentity()
+        gl.glOrtho(-10.0, +265.0, +265.0, -10.0, -255.0, 255.0)
+        gl.glMatrixMode(gl.GL_MODELVIEW)
+
+
+    def makeObject(self):
+        genList = gl.glGenLists(1)
+        gl.glNewList(genList, gl.GL_COMPILE)
+
         gl.glBegin(gl.GL_POINTS)
-        gl.glVertex2d(0.5,0.5)
 
+        for p in self.points:
+            gl.glVertex2d(p[0],p[1])
+
+        gl.glEnd()
+        gl.glEndList()
+
+        return genList
+
+
+    def setClearColor(self, c):
+        gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+
+    def setColor(self, c):
+        gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
 
 def main():
     app = QtWidgets.QApplication(["Corvus"])
     window = CorvusGL2DWidget()
     window.show()
-    sys.exit(app.exec_()) 
+    sys.exit(app.exec_())
+
 
 if __name__ == "__main__":
     main()
