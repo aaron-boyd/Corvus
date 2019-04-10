@@ -1,11 +1,9 @@
-import sys
-import math
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
 from PyQt5.QtGui import QColor
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
-import random
 import OpenGL.GL as gl
+import sys
 
 class CorvusGL2DWidget(QOpenGLWidget):
 
@@ -13,14 +11,8 @@ class CorvusGL2DWidget(QOpenGLWidget):
         super(CorvusGL2DWidget, self).__init__(parent)
 
         self.object = 0
-        self.xRot = 0
-        self.yRot = 0
-
-        self.points = [(0.50,0.50)]
-
-        self.lastPos = QPoint()
-
-        self.trolltechGreen = QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
+        
+        self.points = []
 
         self.black = QColor.fromRgb(0.0,0.0,0.0)
 
@@ -67,7 +59,7 @@ class CorvusGL2DWidget(QOpenGLWidget):
         gl.glNewList(genList, gl.GL_COMPILE)
 
         gl.glBegin(gl.GL_POINTS)
-
+        
         for p in self.points:
             gl.glVertex2d(p[0],p[1])
 
@@ -86,6 +78,8 @@ class CorvusGL2DWidget(QOpenGLWidget):
 def main():
     app = QtWidgets.QApplication(["Corvus"])
     window = CorvusGL2DWidget()
+    window.points = [(5,6)]
+    window.updateObject()
     window.show()
     sys.exit(app.exec_())
 

@@ -1,9 +1,6 @@
-import sys
-import math
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
-import random
 import OpenGL.GL as gl
 
 class CorvusGL3DWidget(QOpenGLWidget):
@@ -18,11 +15,9 @@ class CorvusGL3DWidget(QOpenGLWidget):
         self.xRot = 0
         self.yRot = 0
         self.zRot = 0
-        self.points = [(0.0,0.0,0.0)]
+        self.points = []
 
         self.lastPos = QPoint()
-
-        self.trolltechGreen = QColor.fromCmykF(0.40, 0.0, 1.0, 0.0)
 
         self.black = QColor.fromRgb(0.0,0.0,0.0)
 

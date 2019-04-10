@@ -6,6 +6,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from CorvusHexDumpWidget import CorvusHexDumpWidget
 from CorvusPlotsWidget import CorvusPlotsWidget
 from CorvusHeatMapWidget import CorvusHeatMapWidget
+from CorvusHeatMapGLWidget import CorvusHeatMapGLWidget
 
 appStyle="""
 QMainWindow{
@@ -23,7 +24,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
 
         self.hexDump = CorvusHexDumpWidget()
         self.plotsWidget = CorvusPlotsWidget()
-        self.heatMap = CorvusHeatMapWidget()
+        #self.heatMap = CorvusHeatMapGLWidget()
         self.setLayout(self.creatGridLayout())
 
     def creatGridLayout(self):
@@ -31,8 +32,8 @@ class CorvusMainWidget(QtWidgets.QWidget):
         layout = QtWidgets.QGridLayout()
 
         layout.addWidget(self.plotsWidget,0,0,1,1,QtCore.Qt.AlignRight)
-        layout.addWidget(self.heatMap,0,1,1,1,QtCore.Qt.AlignCenter)
-        layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
+        #layout.addWidget(self.heatMap,0,1,1,1,QtCore.Qt.AlignCenter)
+        #layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
 
         return layout
 
@@ -57,15 +58,18 @@ class CorvusMainWidget(QtWidgets.QWidget):
             start_time = time.time()
             print("Getting data from file...")
             self.getBytesFromFile()
-            print("Generating hex dump...")
-            self.hexDump.populateHexDumpWidget(self.bytes)
+            # print("Generating hex dump...")
+            # self.hexDump.populateHexDumpWidget(self.bytes)
             print("Generating 2D plot...")
-            self.plotsWidget.create2DPoints(self.bytes)
+            self.plotsWidget.create2DPoints(list(self.bytes))
             print("Generating 3D plot...")
-            self.plotsWidget.create3DPoints(self.bytes)
+            self.plotsWidget.create3DPoints(list(self.bytes))
             print("Generating heat map...")
-            self.heatMap.addBytesToHeatMap(self.bytes)
-            self.heatMap.update()
+            #self.heatMap.addBytesToHeatMap(self.bytes)
+            #self.heatMap.update()
+            self.plotsWidget.heatMap.createPoints(list(self.bytes))
+            #print(self.bytes[:20])
+            self.plotsWidget.heatMap.updateObject()
             print("File size: %0.2fMB" % (len(self.bytes) / 1000000.0))
             print("Process time: %0.5f seconds" % (time.time() - start_time))
 

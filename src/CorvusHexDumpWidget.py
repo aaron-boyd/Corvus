@@ -56,3 +56,26 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
             for line in f:
                 self.hexDumpString += line
         os.system("rm /tmp/hexDump.txt")
+
+    # def getHexDump(self,byts):
+    #     if byts != []:
+    #         count = 0
+    #         byteLine = []
+    #         endBytes = len(byts)
+
+    #         for i in range(0, endBytes):
+    #             byteLine.append(byts[i].hex())
+
+    #             if (i+1) % 16 == 0 or (i+1) == endBytes:
+    #                 self.hexDumpString += " ".join(byteLine[:8]) 
+    #                 self.hexDumpString += "  "
+    #                 self.hexDumpString += " ".join(byteLine[:8]) +  "   "
+    #                 for b in byteLine:
+    #                     if b >= "20" and b <= "7e":
+    #                         self.hexDumpString += bytes.fromhex(b).decode("utf-8")
+    #                     else:
+    #                         self.hexDumpString += "."
+    #                 self.hexDumpString += '\n'
+    #                 byteLine = []
+    #     else:
+    #         self.hexDumpString = "" 
