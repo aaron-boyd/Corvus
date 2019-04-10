@@ -102,7 +102,13 @@ class CorvusGL3DWidget(QOpenGLWidget):
         gl.glNewList(genList, gl.GL_COMPILE)
 
         gl.glBegin(gl.GL_POINTS)
+        
+        red = 147.5 / 255.0
+        green = 167.1 / 255.0
+        blue = 186.2 / 255.0
+        alpha = 0.9
 
+        self.setColor(red, green,blue, alpha)
         for p in self.points:
             gl.glVertex3d(p[0],p[1],p[2])
 
@@ -122,5 +128,5 @@ class CorvusGL3DWidget(QOpenGLWidget):
     def setClearColor(self, c):
         gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
 
-    def setColor(self, c):
-        gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+    def setColor(self, red, green, blue, alpha):
+        gl.glColor4f(red, green, blue, alpha)

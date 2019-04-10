@@ -10,7 +10,7 @@ from CorvusHeatMapGLWidget import CorvusHeatMapGLWidget
 
 appStyle="""
 QMainWindow{
-background-color: darkgrey;
+background-color: black;
 }
 """
 
@@ -31,9 +31,9 @@ class CorvusMainWidget(QtWidgets.QWidget):
         horizontalGroupBox = QtWidgets.QGroupBox("Main")
         layout = QtWidgets.QGridLayout()
 
-        layout.addWidget(self.plotsWidget,0,0,1,1,QtCore.Qt.AlignRight)
-        layout.addWidget(self.heatMap,0,1,1,1,QtCore.Qt.AlignCenter)
-        layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
+        layout.addWidget(self.plotsWidget,0,1,1,1,QtCore.Qt.AlignRight)
+        layout.addWidget(self.heatMap,0,0,1,1,QtCore.Qt.AlignCenter)
+        #layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
 
         return layout
 
@@ -58,8 +58,8 @@ class CorvusMainWidget(QtWidgets.QWidget):
             start_time = time.time()
             print("Getting data from file...")
             self.getBytesFromFile()
-            print("Generating hex dump...")
-            self.hexDump.populateHexDumpWidget(self.bytes)
+            #print("Generating hex dump...")
+            #self.hexDump.populateHexDumpWidget(self.bytes)
             print("Generating 2D plot...")
             self.plotsWidget.create2DPoints(list(self.bytes))
             print("Generating 3D plot...")
