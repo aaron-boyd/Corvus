@@ -6,23 +6,21 @@ from PyQt5.QtOpenGL import QGL, QGLFormat, QGLWidget
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
 import OpenGL.GL as gl
 
-class CorvusHeatMapGLWidget(QGLWidget):
+class HeatMapPlotWidget(QOpenGLWidget):
 
     def __init__(self, parent=None):
         super(CorvusHeatMapGLWidget, self).__init__(parent)
 
         self.object = 0
+
         self.bytesPerLine = 32
-        self.pixelsPerByte = self.bytesPerLine / 4
+        self.pixelsPerByte = self.bytesPerLine / 8
         self.bytes = []
-        self.points = [(0,0)]
-
-        self.width =500
-        self.height = 500
-
         self.points = []
-
+        self.width = self.pixelsPerByte * self.bytesPerLine
+        self.height = 600
         self.black = QColor.fromRgb(0.0,0.0,0.0)
+        self.setFixedSize(self.width, self.height)
 
     def createPoints(self,byts):
         self.bytes = byts
@@ -92,8 +90,9 @@ class CorvusHeatMapGLWidget(QGLWidget):
 
             x4 = x1 + self.pixelsPerByte
             y4 = y1 
-            self.qglColor(QColor.fromRgb(0.0, int(self.bytes[i].hex(), 16), 0.0))
+            colorVal = int(self.bytes[i].hex(),16) / 255.0
 
+            self.setColor(0.0,colorVal,0.0,0.0)
             self.quad(x1, y1, x2, y2, x3, y3, x4, y4)
 
         gl.glEnd()
@@ -103,26 +102,21 @@ class CorvusHeatMapGLWidget(QGLWidget):
         return genList
 
     def quad(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        #gl.glBegin(primitive)
-
         gl.glVertex2d(x1, y1)
         gl.glVertex2d(x2, y2)
         gl.glVertex2d(x3, y3)
         gl.glVertex2d(x4, y4)
 
-        #gl.glEnd()
-
     def setClearColor(self, c):
         gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
 
-    def setColor(self, c):
-        gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
+    def setColor(self, red, green, blue, alpha):
+        gl.glColor4f(red, green, blue, alpha)
 
 
 def main():
     app = QtWidgets.QApplication(["Corvus"])
     window = CorvusHeatMapGLWidget()
-    #window.createPoints([1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1,6,3,6,32,2,52,1])
     window.createPoints([b'i', b'm', b'p', b'o', b'r', b't', b' ', b'm', b'a', b't', b'p', b'l', b'o', b't', b'l', b'i', b'b', b'.', b'p', b'y'])
     window.updateObject()
     window.show()

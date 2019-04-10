@@ -12,10 +12,8 @@ class CorvusPlotsWidget(QtWidgets.QTabWidget):
         self.label3D = QtWidgets.QLabel("3D Plot")
         self.plot2D = CorvusGL2DWidget(self)
         self.plot3D = CorvusGL3DWidget(self)
-        self.heatMap = CorvusHeatMapGLWidget(self)
         self.addTab(self.plot2D,"2D Plot")
         self.addTab(self.plot3D,"3D Plot")
-        self.addTab(self.heatMap,"Heat Map")
         self.setFixedSize(QtCore.QSize(600,600))
 
     def create3DPoints(self, byts):
