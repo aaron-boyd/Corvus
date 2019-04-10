@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, 
 import random
 import OpenGL.GL as gl
 
-class CorvusGLWidget(QOpenGLWidget):
+class CorvusGL3DWidget(QOpenGLWidget):
     xRotationChanged = pyqtSignal(int)
     yRotationChanged = pyqtSignal(int)
     zRotationChanged = pyqtSignal(int)
 
     def __init__(self, parent=None):
-        super(CorvusGLWidget, self).__init__(parent)
+        super(CorvusGL3DWidget, self).__init__(parent)
 
         self.object = 0
         self.xRot = 0
