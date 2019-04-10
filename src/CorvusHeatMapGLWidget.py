@@ -6,6 +6,34 @@ from PyQt5.QtOpenGL import QGL, QGLFormat, QGLWidget
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
 import OpenGL.GL as gl
 
+class Scrubber():
+    def __init__(self, x, y, width, height):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.selected = False
+
+    def getQuadPoints(self):
+        x1 = self.x # top left
+        y1 = self.y
+
+        x3 = x1 + self.width # top right
+        y3 = y1 + self.height
+
+        x2 = x1 # bottom left
+        y2 = y1 + self.height
+
+        x4 = x1 + self.width # top right
+        y4 = y1
+        return x1, y1, x2, y2, x3, y3, x4, y4
+
+    def inside(self,mouseX,mouseY):
+        if mouseX >= self.x and mouseX <= self.x + self.width:
+            if mouseY >= self.y and mouseY <= self.y + self.height:
+                return True
+        return False
+
 class CorvusHeatMapGLWidget(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
@@ -22,7 +50,6 @@ class CorvusHeatMapGLWidget(QtWidgets.QWidget):
         self.setLayout(self.layout)
         self.width = self.fullHeatMapPlotWidget.width + self.scrubberHeatMapPlotWidget.width + 40
         self.height = max(self.fullHeatMapPlotWidget.height, self.scrollBar.height()) + 50
-        print(self.width,self.height)
         self.setFixedSize(QtCore.QSize(self.width,self.height))
 
     def initScrollBar(self):
@@ -59,10 +86,15 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
 
         self.height = 550
         self.width = 250
+
+        self.scrubbers = [Scrubber(0, 0, self.width, 5),Scrubber(0, 20, self.width, 5)]
+        
+        
         self.black = QColor.fromRgb(0.0,0.0,0.0)
         self.setFixedSize(self.width, self.height)
 
     def createPoints(self,byts):
+        self.points = []
         self.bytes = byts
         x = 1
         y = 1
@@ -79,7 +111,6 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
 
     def sizeHint(self):
         return QSize(self.width, self.height)
-
 
     def initializeGL(self):
         self.setClearColor(self.black.darker())
@@ -110,58 +141,69 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         gl.glOrtho(0, self.width, self.height, 0, -255.0, 255.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
 
-
-    # def makeObject(self):
-    #     genList = gl.glGenLists(1)
-    #     gl.glNewList(genList, gl.GL_COMPILE)
-    #     gl.glBegin(gl.GL_QUADS)
-
-    #     for i in range(0,len(self.points)):
-
-    #         x1 = self.points[i][0] * self.pixelsPerByte
-    #         y1 = self.points[i][1] * self.pixelsPerByte
-
-    #         x3 = x1 + self.pixelsPerByte
-    #         y3 = y1 + self.pixelsPerByte
-
-    #         x2 = x1
-    #         y2 = y1 + self.pixelsPerByte
-
-    #         x4 = x1 + self.pixelsPerByte
-    #         y4 = y1 
-    #         colorVal = int(self.bytes[i].hex(), 16) / 255.0
-
-    #         self.setColor(0.0, colorVal, 0.0, 0.0)
-    #         self.quad(x1, y1, x2, y2, x3, y3, x4, y4)
-
-    #     gl.glEnd()
-
-    #     gl.glEndList()
-
-    #     return genList
-
     def makeObject(self):
         genList = gl.glGenLists(1)
         gl.glNewList(genList, gl.GL_COMPILE)
+        
+        #self.drawScrubbers()
+
         gl.glBegin(gl.GL_POINTS)
 
         for i in range(0,len(self.points)):
             colorVal = int(self.bytes[i].hex(),16) / 255.0
-            self.setColor(0.0, colorVal, 0.0, 0.0)
+            self.setColor(0.0, colorVal, 0.0, 1.0)
             gl.glVertex2d(self.points[i][0], self.points[i][1])
         
         gl.glEnd()
-
         gl.glEndList()
 
         return genList
 
+    def drawScrubbers(self):
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND )
+
+        gl.glBegin(gl.GL_QUADS)
+        
+        for scrubber in self.scrubbers:
+            self.setColor(1.0, 1.0, 1.0, 0.8)
+            sps = scrubber.getQuadPoints()
+            self.quad(sps[0],sps[1],sps[2],sps[3],sps[4],sps[5],sps[6],sps[7])
+
+        gl.glEnd()
     
     def quad(self, x1, y1, x2, y2, x3, y3, x4, y4):
         gl.glVertex2d(x1, y1)
         gl.glVertex2d(x2, y2)
         gl.glVertex2d(x3, y3)
         gl.glVertex2d(x4, y4)
+        
+    def mousePressEvent(self, event):
+        mouseX = event.x()
+        mouseY = event.y()
+        if event.buttons() & Qt.LeftButton:
+            for scrubber in self.scrubbers:
+                if scrubber.inside(mouseX, mouseY):
+                    scrubber.selected = True
+                else:
+                    scrubber.selected = False
+        
+        self.lastPos = event.pos()
+
+    def mouseMoveEvent(self, event):
+        mouseX = event.x()
+        mouseY = event.y()
+
+        if event.buttons() & Qt.LeftButton:
+            for scrubber in self.scrubbers:
+                if scrubber.selected:
+                    scrubber.y = mouseY
+
+        self.updateObject()
+        self.update()
+        self.lastPos = event.pos()
+
+
 
     def setClearColor(self, c):
         gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
@@ -189,6 +231,7 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
         self.setFixedSize(self.width, self.height)
 
     def createPoints(self,byts):
+        self.points = []
         self.bytes = byts
         x = 1
         y = 1
@@ -231,7 +274,7 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
             return
 
         gl.glViewport((width - side) // 2, (height - side) // 2, side, side)
-        print(type(width))
+
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
         gl.glOrtho(0, self.width, self.height, 0, -255.0, 255.0)
@@ -250,21 +293,21 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
 
         for i in range(0,len(self.points)):
 
-            x1 = self.points[i][0] * self.pixelsPerByte
+            x1 = self.points[i][0] * self.pixelsPerByte # top left
             y1 = self.points[i][1] * self.pixelsPerByte
 
-            x3 = x1 + self.pixelsPerByte
+            x3 = x1 + self.pixelsPerByte # top right
             y3 = y1 + self.pixelsPerByte
 
-            x2 = x1
-            y2 = y1 + self.pixelsPerByte
+            x2 = x1 # bottom left
+            y2 = y1 + self.pixelsPerByte 
 
-            x4 = x1 + self.pixelsPerByte
+            x4 = x1 + self.pixelsPerByte # top right
             y4 = y1 
-            colorVal = int(self.bytes[i].hex(),16) / 255.0
+            colorVal = int(self.bytes[i].hex(),16) / 255.0 # get heat value from byte
 
-            self.setColor(0.0,colorVal,0.0,0.0)
-            self.quad(x1, y1, x2, y2, x3, y3, x4, y4)
+            self.setColor(0.0, colorVal, 0.0, 0.0)
+            self.quad(x1, y1, x2, y2, x3, y3, x4, y4) # draw square
 
         gl.glEnd()
 
