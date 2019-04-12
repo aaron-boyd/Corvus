@@ -1,5 +1,6 @@
 import hexdump
 from PyQt5 import QtCore,QtWidgets,QtGui
+from CorvusScreenScaler import CorvusScreenScaler
 from contextlib import redirect_stdout
 import subprocess
 import os
@@ -19,7 +20,9 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.edit)
         self.setLayout(self.layout)
-        self.setFixedSize(QtCore.QSize(650,600))
+        self.width = CorvusScreenScaler.scaleX(650)
+        self.height = CorvusScreenScaler.scaleY(600)
+        self.setFixedSize(QtCore.QSize(self.width, self.height))
 
     def initScrollBar(self):
         self.scrollBar = self.edit.verticalScrollBar()
