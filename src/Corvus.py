@@ -16,7 +16,6 @@ background-color: black;
 
 here = path.abspath(path.dirname(__file__))
 
-
 class CorvusMainWidget(QtWidgets.QWidget):
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
@@ -28,7 +27,6 @@ class CorvusMainWidget(QtWidgets.QWidget):
         self.setLayout(self.creatGridLayout())
 
     def creatGridLayout(self):
-        horizontalGroupBox = QtWidgets.QGroupBox("Main")
         layout = QtWidgets.QGridLayout()
 
         layout.addWidget(self.plotsWidget,0,1,1,1,QtCore.Qt.AlignRight)
@@ -76,7 +74,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             f = open(self.fileName, "rb")
             self.hexDump.hexDumpString = ""
         except:
-            print("ERROR: Could not find %s" % fileName)
+            print("ERROR: Could not find %s" % self.fileName)
             return
 
         self.bytes = []
@@ -101,7 +99,7 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         menuBar.addAction("Open", self.mainWidget.openFile)
         self.setWindowIcon(QtGui.QIcon(here + '/CorvusIcon.png'))
         self.setCentralWidget(self.mainWidget)
-
+    
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(["Corvus"])

@@ -3,6 +3,7 @@ from PyQt5.QtGui import QColor
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
 import OpenGL.GL as gl
+from CorvusScreenScaler import CorvusScreenScaler
 import sys
 
 class CorvusGL2DWidget(QOpenGLWidget):
@@ -17,10 +18,14 @@ class CorvusGL2DWidget(QOpenGLWidget):
         self.black = QColor.fromRgb(0.0,0.0,0.0)
 
     def minimumSizeHint(self):
-        return QSize(50, 50)
+        width = CorvusScreenScaler.scaleX(50)
+        height = CorvusScreenScaler.scaleY(50)
+        return QSize(width, height)
 
     def sizeHint(self):
-        return QSize(500,500)
+        width = CorvusScreenScaler.scaleX(500)
+        height = CorvusScreenScaler.scaleY(500)
+        return QSize(width, height)
 
 
     def initializeGL(self):

@@ -4,6 +4,7 @@ from PyQt5.QtGui import QColor
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtOpenGL import QGL, QGLFormat, QGLWidget
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
+from CorvusScreenScaler import CorvusScreenScaler
 import OpenGL.GL as gl
 
 class Scrubber():
@@ -84,8 +85,8 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         self.yOffset = 0.0
         self.numLines = 0
 
-        self.height = 550
-        self.width = 250
+        self.width = CorvusScreenScaler.scaleX(250)
+        self.height = CorvusScreenScaler.scaleY(550)
 
         self.scrubbers = [Scrubber(0, 0, self.width, 5),Scrubber(0, 20, self.width, 5)]
         
@@ -107,7 +108,9 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
                 y += 1
 
     def minimumSizeHint(self):
-        return QSize(50, 50)
+        width = CorvusScreenScaler.scaleX(50)
+        height = CorvusScreenScaler.scaleY(50)
+        return QSize(width, height)
 
     def sizeHint(self):
         return QSize(self.width, self.height)
@@ -191,7 +194,6 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         self.lastPos = event.pos()
 
     def mouseMoveEvent(self, event):
-        mouseX = event.x()
         mouseY = event.y()
 
         if event.buttons() & Qt.LeftButton:
@@ -225,8 +227,10 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
         self.points = []
         self.yOffset = 0.0
         self.numLines = 0
-        self.width = self.pixelsPerByte * self.bytesPerLine
-        self.height = 550
+
+        self.width = CorvusScreenScaler.scaleX(self.pixelsPerByte * self.bytesPerLine)
+        self.height = CorvusScreenScaler.scaleY(550)
+
         self.black = QColor.fromRgb(0.0,0.0,0.0)
         self.setFixedSize(self.width, self.height)
 
@@ -244,7 +248,9 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
                 y += 1
 
     def minimumSizeHint(self):
-        return QSize(50, 50)
+        width = CorvusScreenScaler.scaleX(50)
+        height = CorvusScreenScaler.scaleY(50)
+        return QSize(width, height)
 
     def sizeHint(self):
         return QSize(self.width, self.height)
