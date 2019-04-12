@@ -56,7 +56,7 @@ class CorvusHeatMapGLWidget(QtWidgets.QWidget):
     def initScrollBar(self):
         self.scrollBar = QtWidgets.QScrollBar()
         self.scrollBar.setMaximum(10)
-        self.scrollBar.setFixedHeight(self.scrubberHeatMapPlotWidget.height)
+        self.scrollBar.setFixedHeight(CorvusScreenScaler.scaleY(self.scrubberHeatMapPlotWidget.height))
         self.scrollBar.valueChanged.connect(self.printScrollValue)
 
     def printScrollValue(self):
