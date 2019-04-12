@@ -56,7 +56,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
 
         if self.fileName is not None:
             start_time = time.time()
-            print("Getting data from file...")
+            print("Processing \"%s\"..." % (self.fileName))
             self.getBytesFromFile()
             #print("Generating hex dump...")
             #self.hexDump.populateHexDumpWidget(self.bytes)

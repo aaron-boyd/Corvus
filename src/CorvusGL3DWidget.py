@@ -2,6 +2,7 @@ from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
 from PyQt5.QtGui import QColor
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
 import OpenGL.GL as gl
+from math import pow, sqrt
 
 class CorvusGL3DWidget(QOpenGLWidget):
     xRotationChanged = pyqtSignal(int)
@@ -101,16 +102,22 @@ class CorvusGL3DWidget(QOpenGLWidget):
         genList = gl.glGenLists(1)
         gl.glNewList(genList, gl.GL_COMPILE)
 
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND )
+        
         gl.glBegin(gl.GL_POINTS)
         
         red = 147.5 / 255.0
         green = 167.1 / 255.0
         blue = 186.2 / 255.0
-        alpha = 0.9
 
-        self.setColor(red, green,blue, alpha)
         for p in self.points:
-            gl.glVertex3d(p[0],p[1],p[2])
+            x = p[0]
+            y = p[1]
+            z = p[2]
+            alpha =  pow((1.0 - (sqrt(pow(x,2) + pow(y,2) + pow(z,2)) / sqrt(3.0))), 4)
+            self.setColor(red, green, blue, alpha)
+            gl.glVertex3d(x,y,z)
 
         gl.glEnd()
         gl.glEndList()
