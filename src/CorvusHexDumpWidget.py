@@ -4,6 +4,8 @@ from CorvusScreenScaler import CorvusScreenScaler
 from contextlib import redirect_stdout
 import subprocess
 import os
+import sys
+
 
 class CorvusHexDumpWidget(QtWidgets.QWidget):
 
@@ -51,18 +53,45 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
 
 
     def getHexDump(self,byts):
-        with open('/tmp/hexDump.txt', 'w') as f:
+        here = os.path.abspath(os.path.dirname(__file__))
+        platform = self.getPlatform()
+
+        fileName = here + "/hexDump.txt"
+
+        if platform == "Windows":
+            fileName = here + "\hexDump.txt"
+
+        with open(fileName, 'w') as f:
             with redirect_stdout(f):
                 hexdump.hexdump(b''.join(byts))
             f.close()
-        with open('/tmp/hexDump.txt', 'r') as f:
+        with open(fileName, 'r') as f:
             for line in f:
                 self.hexDumpString += line
-        os.system("rm /tmp/hexDump.txt")
+
+        delCommand = "rm " + fileName
+        
+        if platform == "Windows" : 
+            delCommand = "del " + fileName
+
+        os.system(delCommand)
+
+
+
+    def getPlatform(self):
+        platforms = {
+            'linux1' : 'Linux',
+            'linux2' : 'Linux',
+            'darwin' : 'OS X',
+            'win32' : 'Windows'
+        }
+        if sys.platform not in platforms:
+            return sys.platform
+        
+        return platforms[sys.platform]
 
     # def getHexDump(self,byts):
     #     if byts != []:
-    #         count = 0
     #         byteLine = []
     #         endBytes = len(byts)
 
@@ -72,7 +101,7 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
     #             if (i+1) % 16 == 0 or (i+1) == endBytes:
     #                 self.hexDumpString += " ".join(byteLine[:8]) 
     #                 self.hexDumpString += "  "
-    #                 self.hexDumpString += " ".join(byteLine[:8]) +  "   "
+    #                 self.hexDumpString += " ".join(byteLine[8:]) +  "   "
     #                 for b in byteLine:
     #                     if b >= "20" and b <= "7e":
     #                         self.hexDumpString += bytes.fromhex(b).decode("utf-8")

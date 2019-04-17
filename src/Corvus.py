@@ -31,7 +31,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
 
         layout.addWidget(self.plotsWidget,0,1,1,1,QtCore.Qt.AlignRight)
         layout.addWidget(self.heatMap,0,0,1,1,QtCore.Qt.AlignCenter)
-        #layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
+        layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
 
         return layout
 
@@ -56,8 +56,8 @@ class CorvusMainWidget(QtWidgets.QWidget):
             start_time = time.time()
             print("Processing \"%s\"..." % (self.fileName))
             self.getBytesFromFile()
-            #print("Generating hex dump...")
-            #self.hexDump.populateHexDumpWidget(self.bytes)
+            print("Generating hex dump...")
+            self.hexDump.populateHexDumpWidget(self.bytes)
             print("Generating 2D plot...")
             self.plotsWidget.create2DPoints(list(self.bytes))
             print("Generating 3D plot...")
