@@ -89,25 +89,3 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
             return sys.platform
         
         return platforms[sys.platform]
-
-    # def getHexDump(self,byts):
-    #     if byts != []:
-    #         byteLine = []
-    #         endBytes = len(byts)
-
-    #         for i in range(0, endBytes):
-    #             byteLine.append(byts[i].hex())
-
-    #             if (i+1) % 16 == 0 or (i+1) == endBytes:
-    #                 self.hexDumpString += " ".join(byteLine[:8]) 
-    #                 self.hexDumpString += "  "
-    #                 self.hexDumpString += " ".join(byteLine[8:]) +  "   "
-    #                 for b in byteLine:
-    #                     if b >= "20" and b <= "7e":
-    #                         self.hexDumpString += bytes.fromhex(b).decode("utf-8")
-    #                     else:
-    #                         self.hexDumpString += "."
-    #                 self.hexDumpString += '\n'
-    #                 byteLine = []
-    #     else:
-    #         self.hexDumpString = "" 

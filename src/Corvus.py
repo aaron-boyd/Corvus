@@ -5,7 +5,6 @@ from os import path
 from PyQt5 import QtCore, QtWidgets, QtGui
 from CorvusHexDumpWidget import CorvusHexDumpWidget
 from CorvusPlotsWidget import CorvusPlotsWidget
-from CorvusHeatMapWidget import CorvusHeatMapWidget
 from CorvusHeatMapGLWidget import CorvusHeatMapGLWidget
 
 appStyle="""
@@ -36,7 +35,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
         return layout
 
 
-    def getFileName(self):
+    def getFileName(self): # get file from user
         dlg = QtWidgets.QFileDialog()
         dlg.setFileMode(QtWidgets.QFileDialog.AnyFile)
         fileNames = QtCore.QStringListModel()
@@ -69,7 +68,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             print("Process time: %0.5f seconds" % (time.time() - start_time))
 
     
-    def getBytesFromFile(self):
+    def getBytesFromFile(self): # open up the file and get all the bytes
         try:
             f = open(self.fileName, "rb")
             self.hexDump.hexDumpString = ""
