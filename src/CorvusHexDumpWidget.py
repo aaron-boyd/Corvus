@@ -77,7 +77,9 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         os.system(delCommand)
 
 
-
+    # Author: Nat Dunn
+    # Date: 2019
+    # Availability: https://www.webucator.com/how-to/how-check-the-operating-system-with-python.cfm
     def getPlatform(self):
         platforms = {
             'linux1' : 'Linux',

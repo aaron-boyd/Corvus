@@ -1,56 +1,41 @@
 from PyQt5.QtWidgets import QWidget, QProgressBar, QPushButton, QApplication
 from PyQt5.QtCore import QBasicTimer
+from PyQt5 import QtCore
 import sys
 
+# Author: Yoann
+# Date: Oct 18, 2013
+# Availability: https://stackoverflow.com/questions/19442443/busy-indication-with-pyqt-progress-bar
+
 class CorvusProgressBarWidget(QWidget):
-    
-    def __init__(self):
-        super().__init__()
-        
-        self.initUI()
-        
-        
-    def initUI(self):      
 
-        self.pbar = QProgressBar(self)
-        self.pbar.setGeometry(30, 40, 200, 25)
+    def __init__(self, parent=None):
+        super(CorvusProgressBarWidget, self).__init__(parent)
+        layout = QtGui.QVBoxLayout(self)
 
-        self.btn = QPushButton('Start', self)
-        self.btn.move(40, 80)
-        self.btn.clicked.connect(self.doAction)
+        # Create a progress bar and a button and add them to the main layout
+        self.progressBar = QtGui.QProgressBar(self)
+        self.progressBar.setRange(0,1)
+        layout.addWidget(self.progressBar)
+        button = QtGui.QPushButton("Start", self)
+        layout.addWidget(button)      
 
-        self.timer = QBasicTimer()
-        self.step = 0
-        
-        self.setGeometry(300, 300, 280, 170)
-        self.setWindowTitle('QProgressBar')
-        self.show()
-        
-        
-    def timerEvent(self, e):
-      
-        if self.step >= 100:
-            
-            self.timer.stop()
-            self.btn.setText('Finished')
-            return
-            
-        self.step = self.step + 1
-        self.pbar.setValue(self.step)
-        
+        button.clicked.connect(self.onStart)
 
-    def doAction(self):
-      
-        if self.timer.isActive():
-            self.timer.stop()
-            self.btn.setText('Start')
-        else:
-            self.timer.start(100, self)
-            self.btn.setText('Stop')
-            
-        
-if __name__ == '__main__':
-    
-    app = QApplication(sys.argv)
-    ex = CorvusProgressBarWidget()
-    sys.exit(app.exec_())
+        self.myLongTask = TaskThread()
+        self.myLongTask.taskFinished.connect(self.onFinished)
+
+    def onStart(self): 
+        self.progressBar.setRange(0,0)
+        self.myLongTask.start()
+
+    def onFinished(self):
+        # Stop the pulsation
+        self.progressBar.setRange(0,1)
+
+
+class TaskThread(QtCore.QThread):
+    taskFinished = QtCore.pyqtSignal()
+    def run(self):
+        time.sleep(3)
+        self.taskFinished.emit()

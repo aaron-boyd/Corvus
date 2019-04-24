@@ -7,12 +7,6 @@ from CorvusHexDumpWidget import CorvusHexDumpWidget
 from CorvusPlotsWidget import CorvusPlotsWidget
 from CorvusHeatMapGLWidget import CorvusHeatMapGLWidget
 
-appStyle="""
-QMainWindow{
-background-color: black;
-}
-"""
-
 here = path.abspath(path.dirname(__file__))
 
 class CorvusMainWidget(QtWidgets.QWidget):
@@ -34,8 +28,10 @@ class CorvusMainWidget(QtWidgets.QWidget):
 
         return layout
 
-
-    def getFileName(self): # get file from user
+    # Author: Pythonspot
+    # Date: 2017
+    # Availability: https://pythonspot.com/pyqt5-file-dialog/
+    def getFileName(self):
         dlg = QtWidgets.QFileDialog()
         dlg.setFileMode(QtWidgets.QFileDialog.AnyFile)
         fileNames = QtCore.QStringListModel()
@@ -45,7 +41,6 @@ class CorvusMainWidget(QtWidgets.QWidget):
             return fileNames[0]
         else:
             return None
-
 
 
     def openFile(self):
@@ -91,12 +86,27 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
 
         self.mainWidget = CorvusMainWidget()
-
+        
+        # Author: alphanumeric and Trilarion
+        # Date: Feb 12, 2015
+        # Availability: https://stackoverflow.com/questions/28481109/how-to-change-color-of-qmainwindow-borders-and-title-bar
+        appStyle="""
+        QMainWindow{
+        background-color: black;
+        }
+        """
         self.setStyleSheet(appStyle)
+
         mainMenu = self.menuBar()
         menuBar = mainMenu.addMenu("File")
         menuBar.addAction("Open", self.mainWidget.openFile)
+        
+        # Corvus Icon
+        # Author: John Smith
+        # Date: April 24, 2011
+        # Availability: http://www.clker.com/clipart-raven-1.html
         self.setWindowIcon(QtGui.QIcon(here + '/CorvusIcon.png'))
+        
         self.setCentralWidget(self.mainWidget)
     
 

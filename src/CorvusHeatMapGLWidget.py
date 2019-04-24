@@ -215,12 +215,6 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
             self.quad(sps[0],sps[1],sps[2],sps[3],sps[4],sps[5],sps[6],sps[7])
 
         gl.glEnd()
-    
-    def quad(self, x1, y1, x2, y2, x3, y3, x4, y4):
-        gl.glVertex2d(x1, y1)
-        gl.glVertex2d(x2, y2)
-        gl.glVertex2d(x3, y3)
-        gl.glVertex2d(x4, y4)
         
     def mousePressEvent(self, event):
         mouseX = event.x()
@@ -246,7 +240,15 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         self.update()
         self.lastPos = event.pos()
 
-
+    
+    # Author: noobtuts.com
+    # Date: 2019
+    # Availability: http://www.noobtuts.com/python/opengl-introduction
+    def quad(self, x1, y1, x2, y2, x3, y3, x4, y4):
+        gl.glVertex2d(x1, y1)
+        gl.glVertex2d(x2, y2)
+        gl.glVertex2d(x3, y3)
+        gl.glVertex2d(x4, y4)
 
     def setClearColor(self, c):
         gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
@@ -362,6 +364,9 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
 
         return genList
 
+    # Author: noobtuts.com
+    # Date: 2019
+    # Availability: http://www.noobtuts.com/python/opengl-introduction
     def quad(self, x1, y1, x2, y2, x3, y3, x4, y4):
         gl.glVertex2d(x1, y1)
         gl.glVertex2d(x2, y2)
