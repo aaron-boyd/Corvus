@@ -27,7 +27,8 @@ class CorvusMainWidget(QtWidgets.QWidget):
         layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
 
         return layout
-
+        
+    # File Dialog
     # Author: Pythonspot
     # Date: 2017
     # Availability: https://pythonspot.com/pyqt5-file-dialog/
@@ -86,7 +87,8 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         QtWidgets.QMainWindow.__init__(self)
 
         self.mainWidget = CorvusMainWidget()
-        
+
+        # appStyle
         # Author: alphanumeric and Trilarion
         # Date: Feb 12, 2015
         # Availability: https://stackoverflow.com/questions/28481109/how-to-change-color-of-qmainwindow-borders-and-title-bar

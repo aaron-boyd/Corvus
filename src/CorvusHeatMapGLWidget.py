@@ -240,7 +240,7 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         self.update()
         self.lastPos = event.pos()
 
-    
+    # Drawing rectangles
     # Author: noobtuts.com
     # Date: 2019
     # Availability: http://www.noobtuts.com/python/opengl-introduction
@@ -364,6 +364,7 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
 
         return genList
 
+    # Drawing rectangles
     # Author: noobtuts.com
     # Date: 2019
     # Availability: http://www.noobtuts.com/python/opengl-introduction

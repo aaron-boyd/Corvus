@@ -3,6 +3,7 @@ from PyQt5.QtCore import QBasicTimer
 from PyQt5 import QtCore
 import sys
 
+# PyQt Progress Bar
 # Author: Yoann
 # Date: Oct 18, 2013
 # Availability: https://stackoverflow.com/questions/19442443/busy-indication-with-pyqt-progress-bar

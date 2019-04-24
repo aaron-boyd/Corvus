@@ -76,7 +76,7 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
 
         os.system(delCommand)
 
-
+    # Get Platform Information
     # Author: Nat Dunn
     # Date: 2019
     # Availability: https://www.webucator.com/how-to/how-check-the-operating-system-with-python.cfm
