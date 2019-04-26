@@ -6,6 +6,7 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from CorvusHexDumpWidget import CorvusHexDumpWidget
 from CorvusPlotsWidget import CorvusPlotsWidget
 from CorvusHeatMapGLWidget import CorvusHeatMapGLWidget
+from CorvusByteFrequencyWidget import CorvusByteFrequencyWidget
 
 here = path.abspath(path.dirname(__file__))
 
@@ -17,6 +18,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
         self.hexDump = CorvusHexDumpWidget()
         self.plotsWidget = CorvusPlotsWidget()
         self.heatMap = CorvusHeatMapGLWidget()
+        self.frequencyMap = CorvusByteFrequencyWidget()
         self.setLayout(self.creatGridLayout())
 
     def creatGridLayout(self):
@@ -51,6 +53,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             start_time = time.time()
             print("Processing \"%s\"..." % (self.fileName))
             self.getBytesFromFile()
+            self.frequencyMap.frequencyGradients(self.bytes)
             print("Generating hex dump...")
             self.hexDump.populateHexDumpWidget(self.bytes)
             print("Generating 2D plot...")

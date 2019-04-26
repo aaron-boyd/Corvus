@@ -1,10 +1,11 @@
-from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
-from PyQt5.QtGui import QColor
-from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
+import sys
 import OpenGL.GL as gl
 from CorvusScreenScaler import CorvusScreenScaler
-import sys
+from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
+from PyQt5.QtGui import QColor
+from PyQt5 import QtWidgets, QtCore, QtGui
+from PyQt5.QtOpenGL import QGL, QGLFormat, QGLWidget
+from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
 
 #############################################################################
 ##
@@ -46,16 +47,31 @@ import sys
 ##
 #############################################################################
 
-class CorvusGL2DWidget(QOpenGLWidget):
+class CorvusByteFrequencyWidget(QOpenGLWidget):
 
     def __init__(self, parent=None):
-        super(CorvusGL2DWidget, self).__init__(parent)
+        super(CorvusByteFrequencyWidget, self).__init__(parent)
 
         self.object = 0
-        
-        self.points = []
 
+        self.width = CorvusScreenScaler.scaleX(400)
+        self.height = CorvusScreenScaler.scaleY(400)
         self.black = QColor.fromRgb(0.0,0.0,0.0)
+        self.setFixedSize(self.width, self.height)
+
+
+    def frequencyGradients(self,byts):
+        byteStrs = list(map(lambda b: b.hex().upper(), byts))
+        lenBytes = len(byts)
+
+        def convertIntToHexString(x):
+            return '%0*X' % (2,x)
+        def findFrequency(x):
+            return byteStrs.count(convertIntToHexString(x)) / lenBytes
+  
+        self.frequencies = {convertIntToHexString(x) : findFrequency(x) for x in range(0,256)}
+        print(self.frequencies)
+    
 
     def minimumSizeHint(self):
         width = CorvusScreenScaler.scaleX(50)
@@ -63,10 +79,7 @@ class CorvusGL2DWidget(QOpenGLWidget):
         return QSize(width, height)
 
     def sizeHint(self):
-        width = CorvusScreenScaler.scaleX(500)
-        height = CorvusScreenScaler.scaleY(500)
-        return QSize(width, height)
-
+        return QSize(self.width, self.height)
 
     def initializeGL(self):
         self.setClearColor(self.black.darker())
@@ -83,7 +96,7 @@ class CorvusGL2DWidget(QOpenGLWidget):
     def paintGL(self):
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
-        gl.glTranslated(0.0, 0.0, -10.0)
+        gl.glTranslated(0.0, self.yOffset, -10.0)
         gl.glCallList(self.object)
 
     def resizeGL(self, width, height):
@@ -92,42 +105,78 @@ class CorvusGL2DWidget(QOpenGLWidget):
             return
 
         gl.glViewport((width - side) // 2, (height - side) // 2, side, side)
-
         gl.glMatrixMode(gl.GL_PROJECTION)
         gl.glLoadIdentity()
-        gl.glOrtho(-10.0, +265.0, +265.0, -10.0, -255.0, 255.0)
+        gl.glOrtho(0, self.width, self.height, 0, -255.0, 255.0)
         gl.glMatrixMode(gl.GL_MODELVIEW)
-
 
     def makeObject(self):
         genList = gl.glGenLists(1)
         gl.glNewList(genList, gl.GL_COMPILE)
+        
+        #self.drawScrubbers()
 
         gl.glBegin(gl.GL_POINTS)
-        
-        for p in self.points:
-            gl.glVertex2d(p[0],p[1])
 
+        for i in range(0,len(self.points)):
+            colorVal = int(self.bytes[i].hex(),16) / 255.0
+            self.setColor(0.0, colorVal, 0.0, 1.0)
+            gl.glVertex2d(self.points[i][0], self.points[i][1])
+        
         gl.glEnd()
         gl.glEndList()
 
         return genList
 
+    def drawScrubbers(self):
+        gl.glBlendFunc(gl.GL_SRC_ALPHA, gl.GL_ONE_MINUS_SRC_ALPHA)
+        gl.glEnable(gl.GL_BLEND )
+
+        gl.glBegin(gl.GL_QUADS)
+        
+        for scrubber in self.scrubbers:
+            self.setColor(1.0, 1.0, 1.0, 0.8)
+            sps = scrubber.getQuadPoints()
+            self.quad(sps[0],sps[1],sps[2],sps[3],sps[4],sps[5],sps[6],sps[7])
+
+        gl.glEnd()
+        
+    def mousePressEvent(self, event):
+        mouseX = event.x()
+        mouseY = event.y()
+        if event.buttons() & Qt.LeftButton:
+            for scrubber in self.scrubbers:
+                if scrubber.inside(mouseX, mouseY):
+                    scrubber.selected = True
+                else:
+                    scrubber.selected = False
+        
+        self.lastPos = event.pos()
+
+    def mouseMoveEvent(self, event):
+        mouseY = event.y()
+
+        if event.buttons() & Qt.LeftButton:
+            for scrubber in self.scrubbers:
+                if scrubber.selected:
+                    scrubber.y = mouseY
+
+        self.updateObject()
+        self.update()
+        self.lastPos = event.pos()
+
+    # Drawing rectangles
+    # Author: noobtuts.com
+    # Date: 2019
+    # Availability: http://www.noobtuts.com/python/opengl-introduction
+    def quad(self, x1, y1, x2, y2, x3, y3, x4, y4):
+        gl.glVertex2d(x1, y1)
+        gl.glVertex2d(x2, y2)
+        gl.glVertex2d(x3, y3)
+        gl.glVertex2d(x4, y4)
 
     def setClearColor(self, c):
         gl.glClearColor(c.redF(), c.greenF(), c.blueF(), c.alphaF())
 
-    def setColor(self, c):
-        gl.glColor4f(c.redF(), c.greenF(), c.blueF(), c.alphaF())
-
-def main():
-    app = QtWidgets.QApplication(["Corvus"])
-    window = CorvusGL2DWidget()
-    window.points = [(5,6)]
-    window.updateObject()
-    window.show()
-    sys.exit(app.exec_())
-
-
-if __name__ == "__main__":
-    main()
+    def setColor(self, red, green, blue, alpha):
+        gl.glColor4f(red, green, blue, alpha)

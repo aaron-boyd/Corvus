@@ -50,9 +50,6 @@ class CorvusPlotsWidget(QtWidgets.QTabWidget):
 
     def convertBytesTo3DCoords(self, byts):
         
-        xvals = []
-        yvals = []
-        zvals = []
         coords = set()
 
         for i in range(0, len(byts) - 2):
@@ -60,26 +57,17 @@ class CorvusPlotsWidget(QtWidgets.QTabWidget):
             y = int(byts[i+1].hex(), 16)
             z = int(byts[i+2].hex(), 16)
             if (x,y,z) not in coords:
-                xvals.append(x)
-                yvals.append(y)
-                zvals.append(z)
                 coords.add((x,y,z))
 
         return list(coords)
 
     def convertBytesTo2DCoords(self, byts):
-        
-        xvals = []
-        yvals = []
-
         coords = set()
 
         for i in range(0, len(byts) - 1):
             x = int(byts[i].hex(), 16)
             y = int(byts[i+1].hex(), 16)
             if (x,y) not in coords:
-                xvals.append(x)
-                yvals.append(y)
                 coords.add((x,y))
 
         return list(coords)
