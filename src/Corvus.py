@@ -53,7 +53,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             start_time = time.time()
             print("Processing \"%s\"..." % (self.fileName))
             self.getBytesFromFile()
-            self.frequencyMap.frequencyGradients(self.bytes)
+            # self.frequencyMap.frequencyGradients(self.bytes)
             print("Generating hex dump...")
             self.hexDump.populateHexDumpWidget(self.bytes)
             print("Generating 2D plot...")
