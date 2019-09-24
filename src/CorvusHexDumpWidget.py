@@ -1,17 +1,16 @@
 import hexdump
-from PyQt5 import QtCore,QtWidgets,QtGui
-from CorvusScreenScaler import CorvusScreenScaler
-from contextlib import redirect_stdout
 import subprocess
 import os
 import sys
+from PyQt5 import QtCore,QtWidgets,QtGui
+from contextlib import redirect_stdout
 
 
 class CorvusHexDumpWidget(QtWidgets.QWidget):
 
     def __init__(self):
         QtWidgets.QWidget.__init__(self)
-        
+
         self.fileName = ""
         self.hexDumpString = ""
 
@@ -22,8 +21,8 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.edit)
         self.setLayout(self.layout)
-        self.width = CorvusScreenScaler.scaleX(650)
-        self.height = CorvusScreenScaler.scaleY(600)
+        self.width = 575
+        self.height = 600
         self.setFixedSize(QtCore.QSize(self.width, self.height))
 
     def initScrollBar(self):
@@ -45,7 +44,9 @@ class CorvusHexDumpWidget(QtWidgets.QWidget):
         self.edit.setReadOnly(True)
         noWrap = QtGui.QTextOption.WrapMode(0)
         self.edit.setWordWrapMode(noWrap)
-        self.edit.setFont(QtGui.QFont('Consolas', 10))
+        font = QtGui.QFont('Consolas', 9)
+        font.setStyleHint(QtGui.QFont.Monospace)
+        self.edit.setFont(font)
 
     def setText(self, text):
         self.edit.clear()

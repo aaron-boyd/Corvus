@@ -1,6 +1,5 @@
 import sys
 import OpenGL.GL as gl
-from CorvusScreenScaler import CorvusScreenScaler
 from PyQt5.QtCore import pyqtSignal, QPoint, QSize, Qt
 from PyQt5.QtGui import QColor
 from PyQt5 import QtWidgets, QtCore, QtGui
@@ -54,8 +53,8 @@ class CorvusByteFrequencyWidget(QOpenGLWidget):
 
         self.object = 0
 
-        self.width = CorvusScreenScaler.scaleX(400)
-        self.height = CorvusScreenScaler.scaleY(400)
+        self.width = 400
+        self.height = 400
         self.black = QColor.fromRgb(0.0,0.0,0.0)
         self.setFixedSize(self.width, self.height)
 
@@ -74,8 +73,8 @@ class CorvusByteFrequencyWidget(QOpenGLWidget):
     
 
     def minimumSizeHint(self):
-        width = CorvusScreenScaler.scaleX(50)
-        height = CorvusScreenScaler.scaleY(50)
+        width = 50
+        height = 50
         return QSize(width, height)
 
     def sizeHint(self):

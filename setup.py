@@ -17,7 +17,7 @@ setup(
 
     version='1.0.0',
 
-   
+
     description='A binary data visualization tool.',
 
     long_description=long_description,
@@ -29,7 +29,7 @@ setup(
 
     author='Aaron Boyd',
 
- 
+
     author_email='boydaaron06@gmail.com',
 
     classifiers=[
@@ -53,15 +53,12 @@ setup(
 
     keywords='',
 
-    #packages=['hexdump', 'matplotlib', 'PyQt5'],
-
     install_requires=['hexdump', 'matplotlib', 'PyQt5'],
 
     python_requires='>=3.0, <4',
 
-    project_urls={ 
+    project_urls={
         'Github': 'https://github.com/aaron-boyd/Corvus',
-
     },
 )
 

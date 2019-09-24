@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 import sys
 import time
 import hexdump
@@ -29,7 +31,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
         layout.addWidget(self.hexDump,0,2,1,1,QtCore.Qt.AlignLeft)
 
         return layout
-        
+
     # File Dialog
     # Author: Pythonspot
     # Date: 2017
@@ -66,7 +68,7 @@ class CorvusMainWidget(QtWidgets.QWidget):
             print("File size: %0.2fMB" % (len(self.bytes) / 1000000.0))
             print("Process time: %0.5f seconds" % (time.time() - start_time))
 
-    
+
     def getBytesFromFile(self): # open up the file and get all the bytes
         try:
             f = open(self.fileName, "rb")
@@ -105,15 +107,15 @@ class CorvusMainWindow(QtWidgets.QMainWindow):
         mainMenu = self.menuBar()
         menuBar = mainMenu.addMenu("File")
         menuBar.addAction("Open", self.mainWidget.openFile)
-        
+
         # Corvus Icon
         # Author: John Smith
         # Date: April 24, 2011
         # Availability: http://www.clker.com/clipart-raven-1.html
         self.setWindowIcon(QtGui.QIcon(here + '/CorvusIcon.png'))
-        
+
         self.setCentralWidget(self.mainWidget)
-    
+
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(["Corvus"])

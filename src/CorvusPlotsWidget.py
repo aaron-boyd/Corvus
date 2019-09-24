@@ -2,7 +2,6 @@ from PyQt5 import QtCore,QtWidgets,QtGui
 from CorvusGL2DWidget import CorvusGL2DWidget
 from CorvusGL3DWidget import CorvusGL3DWidget
 from CorvusHeatMapGLWidget import CorvusHeatMapGLWidget
-from CorvusScreenScaler import CorvusScreenScaler
 
 class CorvusPlotsWidget(QtWidgets.QTabWidget):
 
@@ -15,8 +14,8 @@ class CorvusPlotsWidget(QtWidgets.QTabWidget):
         self.plot3D = CorvusGL3DWidget(self)
         self.addTab(self.plot3D,"3D Plot")
         self.addTab(self.plot2D,"2D Plot")
-        self.width = CorvusScreenScaler.scaleX(600)
-        self.height = CorvusScreenScaler.scaleY(600)
+        self.width = 600
+        self.height = 600
         self.setFixedSize(QtCore.QSize(self.width,self.height))
 
     def create3DPoints(self, byts):

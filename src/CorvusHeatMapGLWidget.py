@@ -5,7 +5,6 @@ from PyQt5.QtGui import QColor
 from PyQt5 import QtWidgets, QtCore, QtGui
 from PyQt5.QtOpenGL import QGL, QGLFormat, QGLWidget
 from PyQt5.QtWidgets import (QApplication, QHBoxLayout, QOpenGLWidget, QSlider, QWidget)
-from CorvusScreenScaler import CorvusScreenScaler
 
 #############################################################################
 ##
@@ -81,35 +80,37 @@ class CorvusHeatMapGLWidget(QtWidgets.QWidget):
         QtWidgets.QWidget.__init__(self)
         self.layout = QtWidgets.QHBoxLayout()
 
-        self.fullHeatMapPlotWidget = FullHeatMapPlotWidget(self)
+        # self.fullHeatMapPlotWidget = FullHeatMapPlotWidget(self)
         self.scrubberHeatMapPlotWidget = HeatMapPlotScrubberWidget(self)
         self.initScrollBar()
 
-        self.layout.addWidget(self.fullHeatMapPlotWidget)
+        # self.layout.addWidget(self.fullHeatMapPlotWidget)
         self.layout.addWidget(self.scrubberHeatMapPlotWidget)
         self.layout.addWidget(self.scrollBar)
 
         self.setLayout(self.layout)
-        self.width = CorvusScreenScaler.scaleX(self.fullHeatMapPlotWidget.width + self.scrubberHeatMapPlotWidget.width + 40)
-        self.height = CorvusScreenScaler.scaleY(max(self.fullHeatMapPlotWidget.height, self.scrollBar.height()) + 50)
+        # self.width = self.fullHeatMapPlotWidget.width + self.scrubberHeatMapPlotWidget.width + 40
+        self.width = self.scrubberHeatMapPlotWidget.width + 40
+        # self.height = max(self.fullHeatMapPlotWidget.height, self.scrollBar.height()) + 50
+        self.height = self.scrollBar.height() + 50
         self.setFixedSize(QtCore.QSize(self.width,self.height))
 
     def initScrollBar(self):
         self.scrollBar = QtWidgets.QScrollBar()
         self.scrollBar.setMaximum(10)
-        self.scrollBar.setFixedHeight(CorvusScreenScaler.scaleY(self.scrubberHeatMapPlotWidget.height))
+        self.scrollBar.setFixedHeight(self.scrubberHeatMapPlotWidget.height)
         self.scrollBar.valueChanged.connect(self.printScrollValue)
 
     def printScrollValue(self):
         self.scrubberHeatMapPlotWidget.scroll(self.scrollBar.value())
 
     def updateObject(self):
-        self.fullHeatMapPlotWidget.updateObject()
+        # self.fullHeatMapPlotWidget.updateObject()
         self.scrubberHeatMapPlotWidget.updateObject()
         self.scrollBar.setMaximum(self.scrubberHeatMapPlotWidget.numLines)
-    
+
     def createPoints(self, byts):
-        self.fullHeatMapPlotWidget.createPoints(byts)
+        # self.fullHeatMapPlotWidget.createPoints(byts)
         self.scrubberHeatMapPlotWidget.createPoints(byts)
 
 class FullHeatMapPlotWidget(QOpenGLWidget):
@@ -126,12 +127,11 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         self.yOffset = 0.0
         self.numLines = 0
 
-        self.width = CorvusScreenScaler.scaleX(250)
-        self.height = CorvusScreenScaler.scaleY(550)
+        self.width = 250
+        self.height = 550
 
         self.scrubbers = [Scrubber(0, 0, self.width, 5),Scrubber(0, 20, self.width, 5)]
-        
-        
+
         self.black = QColor.fromRgb(0.0,0.0,0.0)
         self.setFixedSize(self.width, self.height)
 
@@ -149,8 +149,8 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
                 y += 1
 
     def minimumSizeHint(self):
-        width = CorvusScreenScaler.scaleX(50)
-        height = CorvusScreenScaler.scaleY(50)
+        width = 50
+        height = 50
         return QSize(width, height)
 
     def sizeHint(self):
@@ -162,12 +162,12 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         gl.glShadeModel(gl.GL_FLAT)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_CULL_FACE)
-    
+
     def updateObject(self):
         self.setClearColor(self.black.darker())
         self.object = self.makeObject()
         self.repaint()
-    
+
     def paintGL(self):
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
@@ -188,7 +188,7 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
     def makeObject(self):
         genList = gl.glGenLists(1)
         gl.glNewList(genList, gl.GL_COMPILE)
-        
+
         #self.drawScrubbers()
 
         gl.glBegin(gl.GL_POINTS)
@@ -197,7 +197,7 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
             colorVal = int(self.bytes[i].hex(),16) / 255.0
             self.setColor(0.0, colorVal, 0.0, 1.0)
             gl.glVertex2d(self.points[i][0], self.points[i][1])
-        
+
         gl.glEnd()
         gl.glEndList()
 
@@ -208,14 +208,14 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
         gl.glEnable(gl.GL_BLEND )
 
         gl.glBegin(gl.GL_QUADS)
-        
+
         for scrubber in self.scrubbers:
             self.setColor(1.0, 1.0, 1.0, 0.8)
             sps = scrubber.getQuadPoints()
             self.quad(sps[0],sps[1],sps[2],sps[3],sps[4],sps[5],sps[6],sps[7])
 
         gl.glEnd()
-        
+
     def mousePressEvent(self, event):
         mouseX = event.x()
         mouseY = event.y()
@@ -225,7 +225,7 @@ class FullHeatMapPlotWidget(QOpenGLWidget):
                     scrubber.selected = True
                 else:
                     scrubber.selected = False
-        
+
         self.lastPos = event.pos()
 
     def mouseMoveEvent(self, event):
@@ -271,8 +271,8 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
         self.yOffset = 0.0
         self.numLines = 0
 
-        self.width = CorvusScreenScaler.scaleX(self.pixelsPerByte * self.bytesPerLine)
-        self.height = CorvusScreenScaler.scaleY(550)
+        self.width = self.pixelsPerByte * self.bytesPerLine
+        self.height = 550
 
         self.black = QColor.fromRgb(0.0,0.0,0.0)
         self.setFixedSize(self.width, self.height)
@@ -291,8 +291,8 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
                 y += 1
 
     def minimumSizeHint(self):
-        width = CorvusScreenScaler.scaleX(50)
-        height = CorvusScreenScaler.scaleY(50)
+        width = 50
+        height = 50
         return QSize(width, height)
 
     def sizeHint(self):
@@ -305,12 +305,12 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
         gl.glShadeModel(gl.GL_FLAT)
         gl.glEnable(gl.GL_DEPTH_TEST)
         gl.glEnable(gl.GL_CULL_FACE)
-    
+
     def updateObject(self):
         self.setClearColor(self.black.darker())
         self.object = self.makeObject()
         self.repaint()
-    
+
     def paintGL(self):
         gl.glClear(gl.GL_COLOR_BUFFER_BIT | gl.GL_DEPTH_BUFFER_BIT)
         gl.glLoadIdentity()
@@ -349,10 +349,10 @@ class HeatMapPlotScrubberWidget(QOpenGLWidget):
             y3 = y1 + self.pixelsPerByte
 
             x2 = x1 # bottom left
-            y2 = y1 + self.pixelsPerByte 
+            y2 = y1 + self.pixelsPerByte
 
             x4 = x1 + self.pixelsPerByte # top right
-            y4 = y1 
+            y4 = y1
             colorVal = int(self.bytes[i].hex(),16) / 255.0 # get heat value from byte
 
             self.setColor(0.0, colorVal, 0.0, 0.0)
